@@ -1,0 +1,15 @@
+
+[Unit]
+Description=pi30915Bot
+After=network.target
+
+[Service]
+User=pi
+Group=pi
+WorkingDirectory=/home/pi/bot-telegram/bot/
+ExecStart=/home/pi/bot-telegram/env/bin/python3 /home/pi/bot-telegram/bot/core.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
