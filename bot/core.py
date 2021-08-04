@@ -1,4 +1,4 @@
-from modulo.sys import temperatura, reboot
+from modulo.sys import temperatura, reiniciar
 from modulo.hostname import get_hostname
 from modulo.cam import testCam, allCam
 from settings import TELEGRAM_TOKEN
@@ -115,12 +115,11 @@ def testCameras(message):
 # reboot
 @bot.message_handler(commands=['reboot'])
 def reboot(message):
-    bot.reply_to(message, "Ficarei um tempo indisponível. Reiniciando...")
-    reboot()
+    bot.reply_to(message, reiniciar()[0])
 
 
 # ip
-@bot.message_hangler(commands=['ping'])
+@bot.message_handler(commands=['ping'])
 def ping_pong(message):
     bot.reply_to(message, f"pong... {meu_ip()}")
 
@@ -129,5 +128,4 @@ try:
     bot.polling(none_stop=True)
 except Exception as _err:
     print(f"Error: {_err}")
-    time.sleep(20)
 

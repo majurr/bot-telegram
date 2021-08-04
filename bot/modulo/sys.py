@@ -1,3 +1,4 @@
+import os
 import subprocess
 
 def temperatura():
@@ -5,5 +6,7 @@ def temperatura():
         subprocess.check_output(["vcgencmd"," measure_temp"])
     ]
 
-def reboot():
-    subprocess.getoutput("sudo reboot")
+def reiniciar():
+    return[
+        subprocess.check_output(["sudo", "shutdown", "-r", "now"])
+    ]
