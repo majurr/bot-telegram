@@ -5,6 +5,7 @@ from modulo.sys import temperatura
 from modulo.network import meu_ip
 from modulo.disk import disk
 
+import subprocess
 import telebot
 import os
 
@@ -15,7 +16,8 @@ bot = telebot.TeleBot(TELEGRAM_TOKEN)
 # boas vindas
 @bot.message_handler(commands=['start','oi', 'olá'])
 def command_help(message):
-    bot.reply_to(message, "Olá seja bem vindo ao veículo 30915")
+    host = subprocess.getoutput('hostname')
+    bot.reply_to(message, f"Olá seja bem vindo ao veículo {host}")
 
 
 # função que checa todos os pré-requisitos para o funcionamento do rasp.
@@ -27,15 +29,19 @@ def command_help(message):
     if os.path.isfile("camera1.jpg"):
         photo = open("camera1.jpg", "rb")
         bot.send_photo(message.chat.id, photo)
+        os.remove("camera1.jpg")
     if os.path.isfile("camera2.jpg"):        
         photo = open("camera2.jpg", "rb")
         bot.send_photo(message.chat.id, photo)
+        os.remove("camera2.jpg")
     if os.path.isfile("camera3.jpg"):
         photo = open("camera3.jpg", "rb")
         bot.send_photo(message.chat.id, photo)
+        os.remove("camera3.jpg")
     if os.path.isfile("camera4.jpg"):
         photo = open("camera4.jpg", "rb")
         bot.send_photo(message.chat.id, photo)
+        os.remove("camera4.jpg")
 
     bot.send_message(message.chat.id, 'Check-up finalizado')
 
@@ -65,6 +71,7 @@ def testCameras(message):
     if os.path.isfile("camera1.jpg"):
         photo = open("camera1.jpg", "rb")
         bot.send_photo(message.chat.id, photo)
+        os.remove("camera1.jpg")
     else:
         bot.reply_to(message, "Não consegui capturar imagem da camera 1")
 
@@ -76,6 +83,7 @@ def testCameras(message):
     if os.path.isfile("camera2.jpg"):
         photo = open("camera2.jpg", "rb")
         bot.send_photo(message.chat.id, photo)
+        os.remove("camera2.jpg")
     else:
         bot.reply_to(message, "Não consegui capturar imagem da camera 2")
 
@@ -87,6 +95,7 @@ def testCameras(message):
     if os.path.isfile("camera3.jpg"):
         photo = open("camera3.jpg", "rb")
         bot.send_photo(message.chat.id, photo)
+        os.remove("camera3.jpg")
     else:
         bot.reply_to(message, "Não consegui capturar imagem da camera 3")
 
@@ -98,8 +107,13 @@ def testCameras(message):
     if os.path.isfile("camera4.jpg"):
         photo = open("camera4.jpg", "rb")
         bot.send_photo(message.chat.id, photo)
+        os.remove("camera4.jpg")
     else:
         bot.reply_to(message, "Não consegui capturar imagem da camera 4")
 
 
-bot.polling()
+try:
+    bot.polling(none_stop=True)
+except Exception as _err:
+    print(f"Error: {_err}")
+    time.sleep(20)
