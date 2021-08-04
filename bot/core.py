@@ -1,7 +1,7 @@
+from modulo.sys import temperatura, reboot
 from modulo.hostname import get_hostname
 from modulo.cam import testCam, allCam
 from settings import TELEGRAM_TOKEN
-from modulo.sys import temperatura
 from modulo.network import meu_ip
 from modulo.disk import disk
 
@@ -14,14 +14,14 @@ bot = telebot.TeleBot(TELEGRAM_TOKEN)
 
 
 # boas vindas
-@bot.message_handler(commands=['start','oi', 'olá'])
+@bot.message_handler(commands=['start','hi'])
 def command_help(message):
     host = subprocess.getoutput('hostname')
     bot.reply_to(message, f"Olá seja bem vindo ao veículo {host}")
 
 
 # função que checa todos os pré-requisitos para o funcionamento do rasp.
-@bot.message_handler(commands=['checkup', 'saude'])
+@bot.message_handler(commands=['saude'])
 def command_help(message):
     bot.reply_to(message, "hostname: {}\nip: {}\nespaço em disco:\n{}\ntemperatura: {}".format(get_hostname()[0], meu_ip(), disk()[0], temperatura()[0]))
     allCam()
@@ -47,19 +47,19 @@ def command_help(message):
 
 
 # estatísticas do disco
-@bot.message_handler(commands=['disco'])
+@bot.message_handler(commands=['space'])
 def command_help(message):
     bot.reply_to(message, disk()[0])
 
 
 # hostname
-@bot.message_handler(commands=['host'])
+@bot.message_handler(commands=['bus'])
 def command_help(message):
     bot.reply_to(message, get_hostname()[0])
 
 
 # temperatura
-@bot.message_handler(commands=['temperatura'])
+@bot.message_handler(commands=['temp'])
 def command_help(message):
     bot.reply_to(message, temperatura()[0])
 
@@ -112,8 +112,22 @@ def testCameras(message):
         bot.reply_to(message, "Não consegui capturar imagem da camera 4")
 
 
+# reboot
+@bot.message_handler(commands=['reboot'])
+def reboot(message):
+    bot.reply_to(message, "Ficarei um tempo indisponível. Reiniciando...")
+    reboot()
+
+
+# ip
+@bot.message_hangler(commands=['ping'])
+def ping_pong(message):
+    bot.reply_to(message, f"pong... {meu_ip()}")
+
+
 try:
     bot.polling(none_stop=True)
 except Exception as _err:
     print(f"Error: {_err}")
     time.sleep(20)
+
