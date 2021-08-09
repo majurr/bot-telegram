@@ -1,7 +1,7 @@
+from modulo.sys import temperatura, reiniciar
 from modulo.hostname import get_hostname
 from modulo.cam import testCam, allCam
 from settings import TELEGRAM_TOKEN
-from modulo.sys import temperatura
 from modulo.network import meu_ip
 from modulo.disk import disk
 
@@ -14,16 +14,22 @@ bot = telebot.TeleBot(TELEGRAM_TOKEN)
 
 
 # boas vindas
-@bot.message_handler(commands=['start','oi', 'olá'])
+@bot.message_handler(commands=['start','hi'])
 def command_help(message):
-    host = subprocess.getoutput('hostname')
-    bot.reply_to(message, f"Olá seja bem vindo ao veículo {host}")
+    bot.send_message(message.chat.id, f"Oi, seja bem vindo. Eu sou o veículo {get_hostname()[0]}")
 
 
 # função que checa todos os pré-requisitos para o funcionamento do rasp.
-@bot.message_handler(commands=['checkup', 'saude'])
+@bot.message_handler(commands=['check'])
 def command_help(message):
-    bot.reply_to(message, "hostname: {}\nip: {}\nespaço em disco:\n{}\ntemperatura: {}".format(get_hostname()[0], meu_ip(), disk()[0], temperatura()[0]))
+    msg = f"Vou fazer uma auto análise e lhe dizer como eu estou.\n \
+        Isso pode levar um tempinho...\n\nMeu IP é: {meu_ip()} \
+        Meu armazenamento está assim: {disk()[0]} \n \
+        Minha temperatura é de: {temperatura()[0]} \n\n \
+        Ah, só relembrando. Eu sou o veículo {get_hostname()[0]} \
+        Agora vou mostrar as imagens de agora que eu consegui capturar."
+
+    bot.send_message(message.chat.id, msg)
     allCam()
 
     if os.path.isfile("camera1.jpg"):
@@ -43,25 +49,25 @@ def command_help(message):
         bot.send_photo(message.chat.id, photo)
         os.remove("camera4.jpg")
 
-    bot.send_message(message.chat.id, 'Check-up finalizado')
+    bot.send_message(message.chat.id, 'Prontinho, status da minha saúde finalizado')
 
 
 # estatísticas do disco
-@bot.message_handler(commands=['disco'])
+@bot.message_handler(commands=['space'])
 def command_help(message):
-    bot.reply_to(message, disk()[0])
+    bot.send_message(message.chat.id, disk()[0])
 
 
 # hostname
-@bot.message_handler(commands=['host'])
+@bot.message_handler(commands=['bus'])
 def command_help(message):
-    bot.reply_to(message, get_hostname()[0])
+    bot.send_message(message.chat.id, get_hostname()[0])
 
 
 # temperatura
-@bot.message_handler(commands=['temperatura'])
+@bot.message_handler(commands=['temp'])
 def command_help(message):
-    bot.reply_to(message, temperatura()[0])
+    bot.send_message(message.chat.id, temperatura()[0])
 
 
 # câmera 1
@@ -112,8 +118,20 @@ def testCameras(message):
         bot.reply_to(message, "Não consegui capturar imagem da camera 4")
 
 
+# reboot
+@bot.message_handler(commands=['reboot'])
+def reboot(message):
+    bot.send_message(message.chat.id, 'Ficarei indisponível por um breve momento')
+    bot.reply_to(message, reiniciar()[0])
+
+
+# ip
+@bot.message_handler(commands=['ping'])
+def ping_pong(message):
+    bot.reply_to(message, f"pong... {meu_ip()}")
+
+
 try:
     bot.polling(none_stop=True)
 except Exception as _err:
     print(f"Error: {_err}")
-    time.sleep(20)
