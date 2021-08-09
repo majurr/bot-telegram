@@ -1,7 +1,7 @@
 import subprocess
 
 def testCam(id):
-    subprocess.getoutput("fswebcam -d v4l2:/dev/cam{} -S 10 --jpeg 95 --shadow --line-colour '#52d3aa' --banner-colour '#3f95ea' --title 'CIMMOV' --subtitle 'Go Ponto a Ponto' --info 'Camera #0{}: Ativa' camera{}.jpg")
+    subprocess.getoutput("fswebcam -d v4l2:/dev/cam{0} -S 10 --jpeg 95 --shadow --line-colour '#52d3aa' --banner-colour '#3f95ea' --title 'CIMMOV' --subtitle 'Go Ponto a Ponto' --info 'Camera #0{0}: Ativa' camera{0}.jpg".format(id))
 
 
 def allCam():
